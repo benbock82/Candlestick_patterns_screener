@@ -1,5 +1,5 @@
 mplfinance
 pandas
 streamlit
-talib
+TA-Lib
 yfinance
