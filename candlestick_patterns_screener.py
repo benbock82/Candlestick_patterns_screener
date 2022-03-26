@@ -62,10 +62,17 @@ def screen_pattern(selected_pattern, state):
 # Create the title for this app
 st.title('Candlestick patterns stock screener')
 
+# Create additional tickers adding to the watchlist
+add_list = pd.Series(['futu', 'iq', 'bb'])
+final_list = create_russell_1000_symbol().append(add_list)
+
+# Create header
+st.subheader('Selections')
+
 # Create a variable for watchlist
 watch_list = st.multiselect(
-    'Please select the ticker(s) from russell 1000 index which you wish to scan for candlestick pattern',
-    create_russell_1000_symbol())
+    'Please select the ticker(s) from russell 1000 index and watchlist which you wish to scan for candlestick pattern',
+    final_list)
 
 # Create option for the trading timeframe
 trading_timeframe = st.selectbox('Trading Time Frame', ('month', 'week', 'day', '60 min', '15 min', '5 min', '1 min'))
@@ -142,8 +149,12 @@ st.write('candlestick chart with 20 intervals simple moving average')
 for chart_symbol in found_pattern_symbol:
     ticker = yf.Ticker(chart_symbol)
     df_chart = ticker.history(period=chart_period, interval=chart_interval)
+    df_chart['ATR'] = talib.ATR(df_chart['High'], df_chart['Low'], df_chart['Close'], timeperiod = 20)
+    df_chart.fillna(0, inplace = True) 
     fig, ax = mpf.plot(df_chart, type='candle', figsize=(20, 10),
                        title=f'Stock symbol: {chart_symbol}\nCandlestick pattern(s): {found_pattern_info[chart_symbol]}',
                        mav=20,
                        volume=True, returnfig=True)
+    
     st.pyplot(fig)
+    st.write('Current 1 ATR (20SMA) :', df_chart['ATR'][-1])

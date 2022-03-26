@@ -64,7 +64,6 @@ st.title('Candlestick patterns stock screener')
 
 # Create additional tickers adding to the watchlist
 add_list = pd.Series(['futu', 'iq', 'bb'])
-final_list = create_russell_1000_symbol().append(add_list)
 
 # Create header
 st.subheader('Selections')
@@ -110,12 +109,12 @@ else:
 
 # Create option to select one or more candlestick patterns to be searched
 all_candles = talib.get_function_groups()['Pattern Recognition']
-strategy = st.selectbox('All or selected candlestick patterns',
-                        ('All candlestick patterns', 'Selected candlestick pattern(s)'))
+strategy_candle = st.selectbox('All or selected candlestick patterns',
+                               ('All candlestick patterns', 'Selected candlestick pattern(s)'))
 
-if strategy == 'All candlestick patterns':
+if strategy_candle == 'All candlestick patterns':
     candle_names = all_candles
-if strategy == 'Selected candlestick pattern(s)':
+if strategy_candle == 'Selected candlestick pattern(s)':
     candle_names = st.multiselect('Candlestick patterns to be searched',
                                   all_candles)
 
@@ -123,13 +122,22 @@ if strategy == 'Selected candlestick pattern(s)':
 state = st.selectbox('Bullish or Bearish state',
                      ['Bullish', 'Bearish'])
 
+strategy_symbol = st.selectbox('All or selected stock(s)',
+                               ('All stocks', 'Selected stock(s)'))
+
+if strategy_symbol == 'All stocks':
+    final_list = create_russell_1000_symbol().append(add_list)
+if strategy_symbol == 'Selected stock(s)':
+    final_list = st.multiselect('Stock(s) to be searched',
+                                create_russell_1000_symbol().append(add_list))
+
 # Create empty list and dict to store the result
 found_pattern_symbol = []
 found_pattern_info = {}
 
 if st.button('Please click here to proceed the screening'):
     # Create for loop to screen through the stocks for candlestick patterns
-    with st.spinner(f'Wait for it...Scanning {len(final_list)} stock(s)'):
+    with st.spinner(f'Wait for it...{len(final_list)} stocks'):
         for symbol in final_list:
             op, hi, lo, cl = load_stock_data(symbol, period=period, interval=interval)
             for candle in candle_names:
@@ -160,4 +168,4 @@ for chart_symbol in found_pattern_symbol:
                        volume=True, returnfig=True)
 
     st.pyplot(fig)
-    st.write('Current 1 ATR (20SMA) :', df_chart['ATR'][-1])
+    st.write(df_chart.iloc[-1])
