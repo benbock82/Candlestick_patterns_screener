@@ -3,3 +3,4 @@ There are 61 candlestick patterns with bullish and bearish states.
 Please pip install the required libraries from the requirements.txt.
 Please follow the instructions in this link(https://github.com/mrjbq7/ta-lib) to install TA-Lib : Technical Analysis Library before using TA-Lib for python.
 You are also required to download the 'Stocks in the Russell 1000 Index.csv'.
+Candlestick_patterns_screener_v3_all_US.py screens all US common stocks. You are required to download 'US_LIST_OF_SYMBOLS.csv'.
